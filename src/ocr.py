@@ -15,7 +15,7 @@ def read_image(image_path, lang="eng"):
     """
     try:
         pytesseract.pytesseract.tesseract_cmd = r'c:/Program Files/Tesseract-OCR/tesseract.exe'
-        return pytesseract.image_to_string(r'c:/Users/Kartikey Agarwal/Downloads/testocr.png', lang='eng')
+        return pytesseract.image_to_string(image_path, lang='eng')
     except:
         return "[ERROR] Unable to process file: {0}".format(image_path)
 
