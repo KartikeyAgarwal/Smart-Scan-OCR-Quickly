@@ -1,9 +1,7 @@
 import pytesseract
 import os, sys
 
-from pytesseract.pytesseract import image_to_string
-
-def read_image(image_path, lang="eng"):
+async def read_image(image_path, lang="eng"):
     """
     Performs OCR on a single image
     
@@ -13,13 +11,14 @@ def read_image(image_path, lang="eng"):
     Returns
     # text: str, converted text from image
     """
+    # return "HELLO"
     try:
         pytesseract.pytesseract.tesseract_cmd = r'c:/Program Files/Tesseract-OCR/tesseract.exe'
-        return pytesseract.image_to_string(image_path, lang='eng')
+        return pytesseract.image_to_string(image_path, lang=lang)
     except:
         return "[ERROR] Unable to process file: {0}".format(image_path)
 
-def read_images_from_dir(dir_path, lang="eng", write_to_file=False):
+async def read_images_from_dir(dir_path, lang="eng", write_to_file=False):
     """
     Performs OCR on all the images present in the directory
 
@@ -32,9 +31,9 @@ def read_images_from_dir(dir_path, lang="eng", write_to_file=False):
     converted_text = {}
     for file_ in os.listdir(dir_path):
         if file_.endswith(('png', 'jpg', 'jpeg')):
-            path = os.path.join(dir_path,file_)
-            text = read_image(path, lang=lang)
-            converted_text[path] = text
+            file_path = os.path.join(dir_path,file_)
+            text = await read_image(file_path, lang=lang)
+            converted_text[file_path] = text
     if write_to_file:
         for file_path, text in converted_text.items():
             _write_to_file(text, os.path.splitext(file_path)[0]+ ".txt")

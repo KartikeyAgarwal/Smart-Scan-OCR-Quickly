@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -19,13 +20,87 @@
         <br>
         <hr style="width: 100%; text-align: left; margin-left: 0;">
         <hr style="width: 100%; text-align: left; margin-left: 0;">
-        <div id="bulk_result" style="display: grid; grid-template-columns: repeat(5,1fr);"></div>
+        <div id="bulk_result" style="display: grid; grid-template-columns: repeat(5,1fr); grid-gap: 10px;"></div>
     </div>
 </body>
 
 <script>
     function performOCR(){
-        
+        var files = document.getElementById("image_file").files
+        var formData = new FormData();
+        var endPoint = '/extract-text';
+        if(files.length == 1){
+            formData.append('image',files[0])
+        }
+        else{
+            for(var i = 0; i < files.length; i++){
+                formData.append('image' + i.toString(), files[i])
+            }
+            endPoint = '/bulk-extract-text'
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: endPoint,
+            data: formData,
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data){
+                if(endPoint == '/extract-text'){
+                    swal("Converted Text", data.text);
+                }
+                else{
+                    swal("Request Received", "Converted files will start showing up at the bottom soon!");
+                    getConvertedFiles(data.task_id, data.num_files)
+                }
+            }
+        });
     }
+
+    function getConvertedFiles(taskId, numFiles){
+        var count = 0;
+        var dict = {}
+        var checker = setInterval(function(){
+            $.ajax({
+                type: 'GET',
+                url: '/bulk-output/' + taskId,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function(data){
+                    wrapper = document.getElementById("bulk_result")
+                    for (var key in data.output) {
+                        if(dict[key]!=true){
+                            var element = document.createElement("button");
+                            element.setAttribute("class", "btn btn-primary")
+                            element.setAttribute("info", data.output[key])
+                            element.setAttribute("id", key)
+                            element.setAttribute("onclick", "displayText(this.id)")
+                            element.innerHTML = key
+                            wrapper.appendChild(element)
+                            count=count+1;
+                            dict[key]=true
+                        }
+                        else{
+                            stopChecker()
+                        }
+                    }
+                    if(Object.keys(data.output).length >= numFiles) {
+                        stopChecker()
+                    }
+                }
+            });
+        }, 3000);
+
+        function stopChecker(){
+            clearInterval(checker)
+        }
+    }
+
+    function displayText(id){
+        swal("Converted Text", document.getElementById(id).getAttribute("info"))
+    }
+
 </script>
 </html>
