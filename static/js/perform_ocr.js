@@ -1,6 +1,10 @@
+// loader which is displayed till the website loads at the start
 $(window).on('load', function () {
     $('#loading').hide();
 })    
+
+// performs OCR on the uploaded files
+// connects with the backend using the Axios method
 function performOCR(){
     loadFun();
     var files = document.getElementById("image_file").files
@@ -26,7 +30,32 @@ function performOCR(){
         }) 
         
         if(endPoint == '/extract-text'){
-            swal("Converted Text", response.data.text);
+            swal({
+                title:"Converted Text!",
+                text: response.data.text,
+                icon: "success",
+                buttons: {
+                    download: {
+                        text: "Download",
+                        value: "download",
+                    },
+                    ok: {
+                        text: "OK",
+                        value: "ok",
+                    }
+                }
+            })
+            .then((value) => {
+                switch(value) {
+                    case "download":
+                        // console.log(response.data)
+                        downloadText(response.data.file_name, response.data.text)
+                        break;
+                    case "ok":
+                        break;
+                }
+            });
+
             stopLoadfun()
         }
         else{
@@ -36,21 +65,57 @@ function performOCR(){
     });
 }
 
+// function to download the text of the file in the PDF format
+function downloadText(file_name, file_text){
+    console.log("here")
+    console.log(file_name)
+    console.log(file_text)
+    axios({
+        method: 'post',
+        url: '/download',
+        data: {
+            "text": file_text,
+            "file_name": file_name,
+        }
+    })
+    .then(function(response){
+        console.log(response)
+        if(response.data.status == true){
+            swal({
+                title:"Download Done!",
+                icon: "success",
+            })
+        }
+        else{
+            swal({
+                title: "Error downloading..!",
+                text: "Please check the file again !!",
+                icon: "error",
+            })
+        }    
+    })
+}
+
+// stops loader
 function stopLoadfun(){
     var load = document.getElementById("loader")
     load.style.display= 'none'
 
 }
 
+// displays loader during loading
 function loadFun(){
     var load = document.getElementById("loader")
     load.style.display = 'block'
 }
 
+// function to display the OCR performed multiple files in the grid 
+// which can be invoked to provide different functions to user
 function getConvertedFiles(taskId, numFiles){
     var count = 0;
     var dict = {}
     loadFun()
+    text=""
     var checker = setInterval(function(){
         $.ajax({
             type: 'GET',
@@ -66,7 +131,9 @@ function getConvertedFiles(taskId, numFiles){
                         stopLoadfun()
                         element.setAttribute("class", "btn btn-primary")
                         element.setAttribute("info", data.output[key])
+                        console.log(key, data.output[key])
                         element.setAttribute("id", key)
+                        text = data.output[key]
                         element.setAttribute("onclick", "displayText(this.id)")
                         element.innerHTML = key
                         wrapper.appendChild(element)
@@ -89,8 +156,36 @@ function getConvertedFiles(taskId, numFiles){
     }
 }
 
-function displayText(id){
-    swal("Converted Text", document.getElementById(id).getAttribute("info"))
+// displays text of the files in the popup box
+function displayText(file_name_id){
+    file_text = document.getElementById(file_name_id).getAttribute("info")
+    console.log(file_text)
+    swal({
+        title:"Converted Text!",
+        text: file_text,
+        icon: "success",
+        buttons: {
+            download: {
+                text: "Download",
+                value: "download",
+            },
+            ok: {
+                text: "OK",
+                value: "ok",
+            }
+        }
+    })
+    .then((value) => {
+        switch(value) {
+            case "download":
+                console.log("download")
+                console.log(file_text)
+                downloadText(file_name_id, file_text)
+                break;
+            case "ok":
+                break;
+        }
+    });
 }
 
 // <!-- USING AJAX METHOD -->
