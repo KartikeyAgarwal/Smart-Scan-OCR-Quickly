@@ -2,8 +2,11 @@ from fastapi import FastAPI, Request, UploadFile, File, BackgroundTasks
 from fastapi.templating import Jinja2Templates
 import shutil, os, uuid
 import ocr
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
 
