@@ -10,6 +10,10 @@
     margin-left: 50%;
 }
 
+#heading{
+    background: crimson;
+    text-decoration: crimson;
+}
 @-webkit-keyframes spin {
     0% { -webkit-transform: rotate(0deg); }
     100% { -webkit-transform: rotate(360deg); }
@@ -22,4 +26,22 @@
 
 #bulk_result{
     padding: 5px;
+}
+
+#ocrBox{
+    background-color: #ffffe6;  
+    text-align: center; 
+    background-color: #f2f2f2;
+    border-radius: 5px;
+}
+
+#image_file {
+    padding: 10px 0px 10px 50px;
+    margin-left: 30%; 
+    margin-top: 1%;
+    font-size: 15px;
+}
+
+#extract-button {
+    font-size: 17px;
 }
