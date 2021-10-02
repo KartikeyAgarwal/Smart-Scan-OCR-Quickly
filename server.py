@@ -22,7 +22,9 @@ def home(request: Request):
 @app.post("/extract-text")
 async def perform_ocr(image: UploadFile = File(...)):
     # Post request to send the single uploaded file, returns the text and file name as the response
-    file_path = _save_file_to_disc(image, path="temp", save_as="temp")
+    name = str(uuid.uuid4())
+    print(name)
+    file_path = _save_file_to_disc(image, path="temp", save_as=name)
     text = await ocr.read_image(file_path)
     print(text)
     return {"file_name": image.filename, "text": text}

@@ -1,6 +1,7 @@
 // loader which is displayed till the website loads at the start
 $(window).on('load', function () {
     $('#loading').hide();
+    console.log("Loaded !!")
 })    
 
 // performs OCR on the uploaded files
@@ -20,7 +21,7 @@ function performOCR(){
         }
         endPoint = '/bulk-extract-text'
     }
-    console.log(endPoint)
+    // console.log(endPoint)
     axios({
         method: 'post',
         url: endPoint,
