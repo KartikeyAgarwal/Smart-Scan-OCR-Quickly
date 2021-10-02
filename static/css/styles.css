@@ -37,11 +37,27 @@
 
 #image_file {
     padding: 10px 0px 10px 50px;
-    margin-left: 30%; 
+    margin-left:41%;
+    margin-right: 1%; 
     margin-top: 1%;
     font-size: 15px;
 }
 
 #extract-button {
     font-size: 17px;
+}
+
+.column1 {
+    float: left;
+    width: 70%;
+    overflow: hidden;
+}
+.column2 {
+    float: left;
+    width: 30%;
+    /* margin-left: 1%; */
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: darkblue;
+    font-size: 14.5px;
+    font-weight:bolder;
 }
