@@ -6,6 +6,7 @@ $(window).on('load', function () {
 // performs OCR on the uploaded files
 // connects with the backend using the Axios method
 function performOCR(){
+    console.log("performing OCR.....!")
     loadFun();
     var files = document.getElementById("image_file").files
     var formData = new FormData();
@@ -19,7 +20,7 @@ function performOCR(){
         }
         endPoint = '/bulk-extract-text'
     }
-    
+    console.log(endPoint)
     axios({
         method: 'post',
         url: endPoint,
@@ -30,6 +31,8 @@ function performOCR(){
         }) 
         
         if(endPoint == '/extract-text'){
+            console.log(endPoint)
+            console.log(response.data.text)
             swal({
                 title:"Converted Text!",
                 text: response.data.text,
@@ -48,7 +51,7 @@ function performOCR(){
             .then((value) => {
                 switch(value) {
                     case "download":
-                        // console.log(response.data)
+                        console.log(response.data)
                         downloadText(response.data.file_name, response.data.text)
                         break;
                     case "ok":
@@ -59,6 +62,7 @@ function performOCR(){
             stopLoadfun()
         }
         else{
+            console.log(endPoint)
             swal("Request Received", "Converted files will start showing up at the bottom soon!");
             getConvertedFiles(response.data.task_id, response.data.num_files)
         }
