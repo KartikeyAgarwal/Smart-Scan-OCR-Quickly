@@ -24,8 +24,9 @@ async def perform_ocr(image: UploadFile = File(...)):
     # Post request to send the single uploaded file, returns the text and file name as the response
     # name = str(uuid.uuid4())
     name="temp"
-    file_path = await _save_file_to_disc(image, path="temp", save_as=name)
-    text = await ocr.read_image(file_path)
+    # file_path = await _save_file_to_disc(image, path="temp", save_as=name)
+    # text = await ocr.read_image(file_path)
+    text="hello this is text"
     print(text)
     return {"file_name": image.filename, "text": text}
 
