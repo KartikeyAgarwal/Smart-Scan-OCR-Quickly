@@ -22,9 +22,9 @@ def home(request: Request):
 @app.post("/extract-text")
 async def perform_ocr(image: UploadFile = File(...)):
     # Post request to send the single uploaded file, returns the text and file name as the response
-    name = str(uuid.uuid4())
-    print(name)
-    file_path = _save_file_to_disc(image, path="temp", save_as=name)
+    # name = str(uuid.uuid4())
+    name="temp"
+    file_path = await _save_file_to_disc(image, path="temp", save_as=name)
     text = await ocr.read_image(file_path)
     print(text)
     return {"file_name": image.filename, "text": text}
@@ -36,7 +36,7 @@ async def bulk_perform_ocr(request: Request, bg_task: BackgroundTasks):
     images = await request.form()
     
     folder_name = str(uuid.uuid4())
-    folder_name = "uploads/"+folder_name
+    # folder_name = "uploads/"+folder_name
     os.mkdir(folder_name)
 
     for image in images.values():
@@ -44,7 +44,7 @@ async def bulk_perform_ocr(request: Request, bg_task: BackgroundTasks):
     
     bg_task.add_task(ocr.read_images_from_dir, folder_name, write_to_file=True)
     
-    folder_name = folder_name[8:]
+    # folder_name = folder_name[8:]
     return {"task_id": folder_name, "num_files": len(images)}
 
 
@@ -83,12 +83,12 @@ async def download_file(request: Request):
 @app.get("/bulk-output/{task_id}")
 async def bulk_output(task_id):
     # Get method to display the OCR performed files as the button which can be clicked to open the popup box
-    
+    print(task_id)
     text_map = {}
-    for file_ in os.listdir("uploads/"+task_id):
+    for file_ in os.listdir(task_id):
         if file_.endswith("txt"):
             print(file_)
-            text_map[file_] = open(os.path.join("uploads/"+task_id, file_)).read()
+            text_map[file_] = open(os.path.join(task_id, file_)).read()
 
     print("DONE")
     return {"task_id": task_id, "output": text_map}
