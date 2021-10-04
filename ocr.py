@@ -11,8 +11,9 @@ async def read_image(image_path, lang="eng"):
     Returns
     # text: str, converted text from image
     """
-    
+    print(image_path)
     try:
+        # pytesseract.pytesseract.tesseract_cmd = '/app/.apt/usr/bin/tesseract'
         # pytesseract.pytesseract.tesseract_cmd = r'c:/Program Files/Tesseract-OCR/tesseract.exe'
         return pytesseract.image_to_string(image_path, lang=lang)
     except:
